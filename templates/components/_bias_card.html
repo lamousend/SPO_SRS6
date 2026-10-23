@@ -1,0 +1,16 @@
+<div class="card h-100 bias-card">
+  <div class="card-status-top bg-{{ bias.group.color }}"></div>
+  <div class="card-body">
+    <h3 class="card-title mb-2 text-break">
+      <a href="{% url 'biases:bias_detail' bias.pk %}" class="text-reset">{{ bias.name }}</a>
+    </h3>
+    <p class="text-secondary mb-3">{{ bias.short_description }}</p>
+    {% include 'components/_danger_meter.html' with level=bias.danger_level %}
+  </div>
+  <div class="card-footer d-flex flex-wrap justify-content-between gap-1 text-secondary small">
+    <span class="d-inline-flex align-items-center gap-1 text-nowrap">
+      <span class="status-dot status-{{ bias.group.color }}"></span>{{ bias.group.name }}
+    </span>
+    <span class="text-nowrap"><i class="ti ti-notebook"></i> Поймала: {{ bias.n }}</span>
+  </div>
+</div>

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ bias.name }}{% endblock %}
+
+{% block page_pretitle %}
+<a href="{% url 'biases:bias_list' %}?group={{ bias.group.pk }}" class="text-reset d-inline-flex align-items-center gap-2">
+  <span class="status-dot status-{{ bias.group.color }}"></span>{{ bias.group.name }}
+</a>
+{% endblock %}
+{% block page_title %}<span class="text-break">{{ bias.name }}</span>{% endblock %}
+{% block page_actions %}
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#catch-modal"
+        onclick="document.getElementById('catch-bias').value = {{ bias.pk }}">
+  <i class="ti ti-plus me-1"></i>Поймала себя
+</button>
+{% endblock %}
+
+{% block content %}
+<div class="row row-cards">
+  <div class="col-12 col-xl-8">
+    <div class="row row-cards">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header"><h3 class="card-title">Что это</h3></div>
+          <div class="card-body">
+            <p class="fs-3">{{ bias.short_description }}</p>
+            {{ bias.full_description|linebreaks }}
+            {% if bias.source %}
+            <a href="{{ bias.source }}" target="_blank" rel="noopener" class="d-inline-flex align-items-center gap-1">
+              <i class="ti ti-external-link"></i>Источник
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header"><h3 class="card-title"><i class="ti ti-bulb me-2 text-yellow"></i>Пример из жизни</h3></div>
+          <div class="card-body">{{ bias.example|linebreaks }}</div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header"><h3 class="card-title"><i class="ti ti-shield-check me-2 text-green"></i>Как бороться</h3></div>
+          <div class="card-body">{{ bias.how_to_fight|linebreaks }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-xl-4">
+    <div class="row row-cards">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            {% include 'components/_danger_meter.html' with level=bias.danger_level %}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-xl-12">
+        <div class="card h-100">
+          <div class="card-header"><h3 class="card-title">Связанные искажения</h3></div>
+          {% include 'components/_related_list.html' with biases=bias.related.all %}
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-xl-12">
+        <div class="card h-100">
+          <div class="card-header">
+            <h3 class="card-title">История поимок</h3>
+            <div class="card-actions">
+              <span class="badge bg-primary-lt">{{ catches|length }}</span>
+            </div>
+          </div>
+          {% include 'components/_catch_list.html' with catches=catches %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

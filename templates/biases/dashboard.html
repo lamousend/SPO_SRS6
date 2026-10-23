@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load bias_tags %}
+
+{% block title %}Мой мозг{% endblock %}
+{% block body_class %}page-home{% endblock %}
+
+{% block page_header %}
+<section class="hero">
+  <div class="container-xl hero-inner">
+    <h1 class="hero-title">Когнитивные искажения</h1>
+    <p class="hero-text">
+      Моя личная статистика когнитивных искажений, которые я всё чаще замечаю в себе.
+      Классификация и анализ проведены на основе работ Бастера Бенсона и книги
+      Даниэля Канемана «Думай медленно… решай быстро».
+    </p>
+  </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="row row-cards">
+  <div class="col-12">
+    <p class="summary-line">
+      Записей в дневнике: {{ total }},
+      из них за последнюю неделю — {{ week }}.
+      {% if top_bias %}Чаще всего я попадаюсь в ловушку «<i>{{ top_bias.name }}</i>».{% endif %}
+    </p>
+  </div>
+
+  <div class="col-12">
+    {% include 'components/_group_stats.html' with groups=groups %}
+  </div>
+
+  <div class="col-12 col-xl-8">
+    <div class="card h-100">
+      <div class="card-header">
+        <h3 class="card-title">Записи по дням</h3>
+        <div class="card-actions text-secondary">последние 14 дней</div>
+      </div>
+      <div class="card-body">
+        {% for day in days %}
+        <div class="row align-items-center g-2 mb-2">
+          <div class="col-3 col-sm-2 text-secondary small">{{ day.date|date:"d.m" }}<span class="d-none d-sm-inline">, {{ day.date|date:"D" }}</span></div>
+          <div class="col">
+            <progress value="{{ day.count }}" max="{{ max_day_count }}"></progress>
+          </div>
+          <div class="col-1 text-end fw-medium">{{ day.count }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-xl-4">
+    {% bias_of_day %}
+  </div>
+
+  <div class="col-12">
+    <h2 class="mt-2 mb-0">Чаще всего попадаюсь</h2>
+  </div>
+  {% for bias in top_biases %}
+  <div class="col-12 col-md-6 col-xl-4">
+    {% include 'components/_bias_card.html' with bias=bias %}
+  </div>
+  {% empty %}
+  <div class="col-12">
+    <div class="card">
+      {% include 'components/_empty.html' with text='Пока пусто — запишите первый случай, и здесь появится статистика.' icon='chart-bar' %}
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header"><h3 class="card-title">Последние записи</h3></div>
+      {% include 'components/_catch_list.html' with catches=recent_catches show_bias=True %}
+    </div>
+  </div>
+</div>
+{% endblock %}

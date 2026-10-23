@@ -1,0 +1,12 @@
+<div class="group-stats">
+  {% for group in groups %}
+  <div class="group-stat">
+    <div class="group-stat-name">
+      <span class="status-dot status-{{ group.color }}"></span>{{ group.name }}
+    </div>
+    <div class="group-stat-value">{{ group.n }}</div>
+    <progress value="{{ group.percent }}" max="100"></progress>
+    <div class="group-stat-percent">{{ group.percent }}% всех записей</div>
+  </div>
+  {% endfor %}
+</div>

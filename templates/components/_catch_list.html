@@ -1,0 +1,7 @@
+<div class="list-group list-group-flush">
+  {% for catch in catches %}
+  {% include 'components/_catch_item.html' %}
+  {% empty %}
+  {% include 'components/_empty.html' with text='Пока пусто — запишите первый случай.' icon='notebook' %}
+  {% endfor %}
+</div>

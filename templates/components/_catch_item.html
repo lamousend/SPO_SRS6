@@ -1,0 +1,21 @@
+<div class="list-group-item catch-item">
+  <div class="d-flex align-items-start gap-2">
+    <div class="flex-fill">
+      {% if show_bias %}
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="status-dot status-{{ catch.bias.group.color }}"></span>
+        <a href="{% url 'biases:bias_detail' catch.bias.pk %}" class="fw-medium text-break">{{ catch.bias.name }}</a>
+      </div>
+      {% endif %}
+      <div class="text-secondary small mb-1">
+        {{ catch.created_at|date:"j E Y" }}<span class="d-none d-md-inline">, {{ catch.created_at|date:"H:i" }}</span>
+      </div>
+      <div>{{ catch.situation }}</div>
+    </div>
+    <button type="button" class="btn btn-ghost-secondary btn-icon btn-sm"
+            onclick="deleteCatch(this)" data-url="{% url 'biases:api_catch_delete' catch.pk %}"
+            title="Удалить запись">
+      <i class="ti ti-trash"></i>
+    </button>
+  </div>
+</div>

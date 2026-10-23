@@ -1,0 +1,34 @@
+<div class="modal modal-blur fade" id="catch-modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form id="catch-form" method="post" action="{% url 'biases:api_catch_create' %}" novalidate>
+        <div class="modal-header">
+          <h5 class="modal-title">Поймала себя</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label required" for="catch-bias">Искажение</label>
+            <select class="form-select" id="catch-bias" name="bias_id" required>
+              <option value="">Выберите искажение</option>
+              {% for bias in biases %}
+              <option value="{{ bias.pk }}">{{ bias.group.name }} — {{ bias.name }}</option>
+              {% endfor %}
+            </select>
+            <div class="invalid-feedback">Выберите искажение из списка.</div>
+          </div>
+          <div>
+            <label class="form-label required" for="catch-situation">Что произошло</label>
+            <textarea class="form-control" id="catch-situation" name="situation" rows="4" required
+                      placeholder="Коротко опишите ситуацию и как вы заметили искажение"></textarea>
+            <div class="invalid-feedback">Опишите, что произошло.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn me-auto" data-bs-dismiss="modal">Отмена</button>
+          <button type="submit" class="btn btn-primary">Записать</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Тренажёр{% endblock %}
+
+{% block page_pretitle %}Тренажёр{% endblock %}
+{% block page_title %}Угадайте искажение{% endblock %}
+{% block page_actions %}
+<div class="d-flex align-items-center gap-3">
+  <span class="text-secondary small">
+    Серия: <span class="fw-bold" id="quiz-streak">0</span> · Рекорд: <span class="fw-bold" id="quiz-best">0</span>
+  </span>
+  <a href="{% url 'biases:quiz' %}" class="btn"><i class="ti ti-refresh me-1"></i><span class="d-none d-sm-inline">Другой вопрос</span></a>
+</div>
+{% endblock %}
+
+{% block content %}
+{% if question %}
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-9 col-xl-8" id="quiz" data-url="{% url 'biases:api_quiz_check' question.pk %}">
+    <div class="card">
+      <div class="card-body">
+        <div class="subheader mb-2">Ситуация</div>
+        <p class="fs-3 mb-0">{{ question.situation }}</p>
+      </div>
+    </div>
+
+    <h3 class="mt-4 mb-3">Какое искажение здесь сработало?</h3>
+    <div class="row g-2">
+      {% for option in options %}
+      <div class="col-12 col-md-6">
+        <button type="button" class="btn w-100 h-100 py-3 text-wrap" onclick="checkAnswer(this)" data-option="{{ option.pk }}">{{ option.name }}</button>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="alert mt-4 d-none" id="quiz-result">
+      <h4 class="alert-title" id="quiz-verdict"></h4>
+      <div id="quiz-explanation"></div>
+    </div>
+    <a href="{% url 'biases:quiz' %}" class="btn btn-primary d-none" id="quiz-next">
+      Следующий вопрос<i class="ti ti-arrow-right ms-1"></i>
+    </a>
+
+  </div>
+</div>
+{% else %}
+{% include 'components/_empty.html' with text='Вопросов пока нет. Добавьте ситуации в админке, в разделе «Вопросы тренажера».' icon='target-arrow' %}
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/quiz.js' %}"></script>
+{% endblock %}

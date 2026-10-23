@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static bias_tags %}
+
+{% block title %}Каталог{% endblock %}
+
+{% block page_pretitle %}Справочник{% endblock %}
+{% block page_title %}Каталог искажений{% endblock %}
+{% block page_actions %}<span class="text-secondary">Найдено: <span id="found-count">{{ biases|length }}</span></span>{% endblock %}
+
+{% block content %}
+<div class="row row-cards">
+  <div class="col-12 col-md-9">
+    <form method="get" id="search-form" class="row g-2 mb-4" data-url="{% url 'biases:api_bias_search' %}">
+      <div class="col">
+        <div class="input-icon">
+          <span class="input-icon-addon"><i class="ti ti-search"></i></span>
+          <input type="search" name="q" value="{{ q }}" class="form-control" placeholder="Название или описание"
+                 autocomplete="off">
+        </div>
+      </div>
+      <div class="col-12 col-md-auto">
+        <div class="d-flex flex-column flex-md-row gap-2">
+          <select name="group" class="form-select">
+            <option value="">Все группы</option>
+            {% for group in groups %}
+            <option value="{{ group.pk }}"{% if group.pk|stringformat:"d" == selected_group %} selected{% endif %}>{{ group.name }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="btn btn-primary">Найти</button>
+          <a href="{% url 'biases:bias_list' %}" class="btn{% if not q and not selected_group %} d-none{% endif %}" id="reset-btn">Сбросить</a>
+        </div>
+      </div>
+    </form>
+
+    <div id="bias-grid">
+      {% include 'biases/_bias_grid.html' %}
+    </div>
+  </div>
+
+  <div class="col-md-3 d-none d-md-block">
+    <div class="bias-of-day-side">
+      {% bias_of_day %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/search.js' %}"></script>
+{% endblock %}

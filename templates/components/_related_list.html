@@ -1,0 +1,11 @@
+{% if biases %}
+<div class="list-group list-group-flush">
+  {% for bias in biases %}
+  <a href="{% url 'biases:bias_detail' bias.pk %}" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+    <span class="status-dot status-{{ bias.group.color }}"></span>{{ bias.name }}
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+{% include 'components/_empty.html' with text='Связей пока нет.' icon='link' %}
+{% endif %}

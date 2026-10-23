@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Менеджер данных{% endblock %}
+
+{% block page_pretitle %}Управление{% endblock %}
+{% block page_title %}Менеджер данных{% endblock %}
+
+{% block content %}
+<div class="row row-cards" id="manage"
+     data-groups-url="{% url 'biases:biasgroup-list' %}"
+     data-biases-url="{% url 'biases:bias-list' %}">
+
+  <div class="col-12 col-xl-4">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Группы</h3>
+        <div class="card-actions">
+          <button type="button" class="btn btn-primary btn-sm" id="group-add">
+            <i class="ti ti-plus me-1"></i>Добавить
+          </button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-vcenter">
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th class="w-1">Порядок</th>
+              <th class="w-1"></th>
+            </tr>
+          </thead>
+          <tbody id="groups-body">
+            <tr><td colspan="3" class="text-secondary">Загрузка…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-xl-8">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Искажения</h3>
+        <div class="card-actions">
+          <button type="button" class="btn btn-primary btn-sm" id="bias-add">
+            <i class="ti ti-plus me-1"></i>Добавить
+          </button>
+        </div>
+      </div>
+      <form id="bias-filters" class="card-body border-bottom row g-2">
+        <div class="col-12 col-md-3">
+          <input type="search" class="form-control" name="search" placeholder="Название или описание">
+        </div>
+        <div class="col-6 col-md-4">
+          <select class="form-select" id="filter-group" name="group">
+            <option value="">Все группы</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-2">
+          <select class="form-select" name="danger_level">
+            <option value="">Опасность</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-3">
+          <select class="form-select" name="ordering">
+            <option value="">По названию</option>
+            <option value="danger_level">Опасность ↑</option>
+            <option value="-danger_level">Опасность ↓</option>
+          </select>
+        </div>
+      </form>
+      <div class="table-responsive">
+        <table class="table table-vcenter">
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th class="d-none d-md-table-cell">Группа</th>
+              <th class="w-1">Опасность</th>
+              <th class="w-1"></th>
+            </tr>
+          </thead>
+          <tbody id="biases-body">
+            <tr><td colspan="4" class="text-secondary">Загрузка…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+<div class="modal modal-blur fade" id="group-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form id="group-form" novalidate>
+        <div class="modal-header">
+          <h5 class="modal-title"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label required" for="group-name">Название</label>
+            <input type="text" class="form-control" id="group-name" name="name" maxlength="150" required>
+            <div class="invalid-feedback">Введите название группы.</div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-sm-8 mb-3">
+              <label class="form-label required" for="group-color">Цвет</label>
+              <select class="form-select" id="group-color" name="color" required>
+                <option value="">Выберите цвет</option>
+                {% for value, label in color_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+              </select>
+              <div class="invalid-feedback">Выберите цвет.</div>
+            </div>
+            <div class="col-12 col-sm-4 mb-3">
+              <label class="form-label" for="group-order">Порядок</label>
+              <input type="number" class="form-control" id="group-order" name="order" min="0" value="0">
+            </div>
+          </div>
+          <div>
+            <label class="form-label" for="group-description">Описание</label>
+            <textarea class="form-control" id="group-description" name="description" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn me-auto" data-bs-dismiss="modal">Отмена</button>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal modal-blur fade" id="bias-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <form id="bias-form" class="d-flex flex-column overflow-hidden" novalidate>
+        <div class="modal-header">
+          <h5 class="modal-title"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-12 col-md-8 mb-3">
+              <label class="form-label required" for="bias-name">Название</label>
+              <input type="text" class="form-control" id="bias-name" name="name" maxlength="150" required>
+              <div class="invalid-feedback">Введите название искажения.</div>
+            </div>
+            <div class="col-12 col-md-4 mb-3">
+              <label class="form-label required" for="bias-danger">Опасность</label>
+              <select class="form-select" id="bias-danger" name="danger_level" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <div class="invalid-feedback">Выберите уровень опасности от 1 до 5.</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label required" for="bias-group">Группа</label>
+            <select class="form-select" id="bias-group" name="group" required>
+              <option value="">Выберите группу</option>
+            </select>
+            <div class="invalid-feedback">Выберите группу.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label required" for="bias-short">Кратко</label>
+            <input type="text" class="form-control" id="bias-short" name="short_description" maxlength="255" required>
+            <div class="invalid-feedback">Введите краткое описание.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label required" for="bias-full">Подробное описание</label>
+            <textarea class="form-control" id="bias-full" name="full_description" rows="3" required></textarea>
+            <div class="invalid-feedback">Введите подробное описание.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label required" for="bias-example">Пример из жизни</label>
+            <textarea class="form-control" id="bias-example" name="example" rows="2" required></textarea>
+            <div class="invalid-feedback">Введите пример.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label required" for="bias-fight">Как бороться</label>
+            <textarea class="form-control" id="bias-fight" name="how_to_fight" rows="2" required></textarea>
+            <div class="invalid-feedback">Опишите, как бороться.</div>
+          </div>
+          <div>
+            <label class="form-label" for="bias-source">Источник</label>
+            <input type="url" class="form-control" id="bias-source" name="source" placeholder="https://">
+            <div class="invalid-feedback">Введите адрес, начинающийся с http:// или https://.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn me-auto" data-bs-dismiss="modal">Отмена</button>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal modal-blur fade" id="confirm-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn me-auto" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-danger" id="confirm-yes">Удалить</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/manage.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% if bias %}
+<figure class="quote-of-day">
+  <div class="subheader mb-3">Совет дня</div>
+  <blockquote class="quote-of-day-text">«{{ quote }}»</blockquote>
+  <figcaption class="quote-of-day-source">
+    — как бороться: <a href="{% url 'biases:bias_detail' bias.pk %}">{{ bias.name }}</a>
+  </figcaption>
+</figure>
+{% endif %}

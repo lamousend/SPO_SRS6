@@ -1,0 +1,22 @@
+{% regroup biases by group as group_list %}
+{% for item in group_list %}
+<section class="bias-group mb-4">
+  <button type="button" class="bias-group-toggle" data-bs-toggle="collapse"
+          data-bs-target="#group-{{ item.grouper.pk }}" aria-expanded="true" aria-controls="group-{{ item.grouper.pk }}">
+    <span class="status-dot status-{{ item.grouper.color }}"></span>
+    <span class="bias-group-name">{{ item.grouper.name }}</span>
+    <i class="ti ti-chevron-down bias-group-chevron"></i>
+  </button>
+  <div class="collapse show" id="group-{{ item.grouper.pk }}">
+    <div class="row row-cards pt-3">
+      {% for bias in item.list %}
+      <div class="col-12 col-md-6 col-xl-4">
+        {% include 'components/_bias_card.html' %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% empty %}
+{% include 'components/_empty.html' with text='Ничего не нашлось. Попробуйте другое слово или выберите все группы.' icon='search' %}
+{% endfor %}

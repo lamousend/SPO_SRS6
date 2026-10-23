@@ -1,0 +1,20 @@
+<div class="card bias-of-day">
+  {% if bias %}
+  <div class="card-status-top bg-{{ bias.group.color }}"></div>
+  <div class="card-body">
+    <div class="subheader mb-2">{% if is_random %}Ещё одно искажение{% else %}Искажение дня{% endif %}</div>
+    <h3 class="card-title mb-2 text-break">{{ bias.name }}</h3>
+    <p class="text-secondary mb-3">{{ bias.short_description }}</p>
+    <div class="mb-3">{% include 'components/_danger_meter.html' with level=bias.danger_level %}</div>
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{% url 'biases:bias_detail' bias.pk %}" class="btn btn-outline-primary btn-sm">Подробнее</a>
+      <button type="button" class="btn btn-ghost-secondary btn-sm"
+              onclick="randomBias(this)" data-url="{% url 'biases:api_bias_random' %}?exclude={{ bias.pk }}">
+        <i class="ti ti-arrows-shuffle me-1"></i>Другое
+      </button>
+    </div>
+  </div>
+  {% else %}
+  {% include 'components/_empty.html' with text='Каталог пока пуст.' icon='books' %}
+  {% endif %}
+</div>
